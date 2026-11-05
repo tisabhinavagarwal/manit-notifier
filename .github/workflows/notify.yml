@@ -2,8 +2,10 @@ name: MANIT notice check
 
 on:
   schedule:
-    - cron: "*/10 * * * *"   # every 10 min (GitHub may delay runs a few minutes)
-  workflow_dispatch:          # lets you run it manually from the Actions tab
+    # Backup only: the main trigger is cron-job.org calling workflow_dispatch every 10 min.
+    # Offset from :00/:10 because GitHub drops/delays on-the-minute schedules most.
+    - cron: "3-59/10 * * * *"
+  workflow_dispatch:          # manual runs + external cron-job.org trigger
 
 permissions:
   contents: write

@@ -33,3 +33,19 @@ From any terminal: `curl -d "Test notice" ntfy.sh/<your-topic>` (it should appea
 - GitHub disables scheduled workflows in repos with no activity for 60 days. The bot's own commits on new notices
   normally keep it alive; if you ever get an email saying it was disabled, re-enable it from the Actions tab.
 - If the run fails with "No notices parsed", the website's layout changed or the site was down.
+
+## Reliable 10-minute trigger
+
+GitHub's own `schedule` is best-effort (often late, sometimes skipped), so it is only a backup here.
+The main trigger is a free [cron-job.org](https://cron-job.org) job that every 10 minutes sends:
+
+```
+POST https://api.github.com/repos/tisabhinavagarwal/manit-notifier/actions/workflows/notify.yml/dispatches
+Authorization: Bearer <fine-grained token: this repo only, Actions read & write>
+Accept: application/vnd.github+json
+Content-Type: application/json
+
+{"ref":"main"}
+```
+
+GitHub answers `204 No Content` on success. The token expires on the date chosen when creating it, so renew it then.
